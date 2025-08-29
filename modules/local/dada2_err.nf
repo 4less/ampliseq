@@ -78,13 +78,11 @@ process DADA2_ERR {
         errR <- safe_learn(fnRs, "${prefix}_2")
         sink(file = NULL)
 
-        write.table('learnErrors        nbases = 1e8, nreads = NULL, randomize = TRUE, MAX_CONSIST = 10, OMEGA_C = 0,qualityType = "Auto",errorEstimationFunction = loessErrfun',
-                    file = "learnErrors.args.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
-        writeLines(c("\"NFCORE_AMPLISEQ:AMPLISEQ:DADA2_ERR\":",
-                    paste0("    R: ", paste0(R.Version()[c("major","minor")], collapse = ".")),
-                    paste0("    dada2: ", packageVersion("dada2")) ),
-                "versions.yml")
+        write.table('learnErrors\t$args', file = "learnErrors.args.txt", row.names = FALSE, col.names = FALSE, quote = FALSE, na = '')
+
+        writeLines(c("\\"${task.process}\\":", paste0("    R: ", paste0(R.Version()[c("major","minor")], collapse = ".")),paste0("    dada2: ", packageVersion("dada2")) ), "versions.yml")
+
 
 
         """
