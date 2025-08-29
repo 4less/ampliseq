@@ -30,11 +30,13 @@ process DADA2_ERR {
         suppressPackageStartupMessages(library(dada2))
         set.seed($seed) # Initialize random number generator for reproducibility
 
+
+
         safe_learn <- function(files, fname) {
             total_reads <- sum(sapply(files, function(f) length(readLines(gzfile(f)))/4))
             if(total_reads < 50) {   # threshold for DADA2 error learning
                 cat("WARNING:", fname, "has too few reads (", total_reads, "). Skipping learnErrors.\n")
-                saveRDS(NULL, paste0(fname, ".rds"))
+                saveRDS(NULL, paste0(fname, ".err.rds"))
                 pdf(paste0(fname, ".pdf")); plot.new(); dev.off()
                 svg(paste0(fname, ".svg")); plot.new(); dev.off()
                 writeLines("Too few reads to estimate errors.", paste0(fname, ".convergence.txt"))
@@ -43,7 +45,7 @@ process DADA2_ERR {
                 err <- learnErrors(files, nbases = 1e8, nreads = NULL, randomize = TRUE,
                                 MAX_CONSIST = 10, OMEGA_C = 0, qualityType = "Auto",
                                 errorEstimationFunction = loessErrfun, multithread = 6, verbose = TRUE)
-                saveRDS(err, paste0(fname, ".rds"))
+                saveRDS(err, paste0(fname, ".err.rds"))
                 pdf(paste0(fname, ".pdf")); plotErrors(err, nominalQ = TRUE); dev.off()
                 svg(paste0(fname, ".svg")); plotErrors(err, nominalQ = TRUE); dev.off()
                 sink(paste0(fname, ".convergence.txt"))
